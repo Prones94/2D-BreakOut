@@ -11,6 +11,21 @@ let paddleHeight = 10;
 let paddleX = (canvas.width-paddleWidth) / 2;
 var rightPressed = false;
 var leftPressed = false;
+let brickRowCount = 3;
+let brickColumnCount = 5;
+let brickWidth = 75;
+let brickHeight = 20;
+let brickPadding = 10;
+let brickOffsetTop = 30;
+let brickOffsetLeft = 30;
+
+var bricks = [];
+for(var c = 0; c < brickColumnCount; c++){
+    bricks[c] = [];
+    for(var r= 0; r< brickColumnCount; r++){
+        bricks[c][r] = {x:0, y:0};
+    }
+};
 
 // draw Ball
 function drawBall(){
@@ -19,21 +34,38 @@ function drawBall(){
     ctx.fillStyle = '#0095DD';
     ctx.fill();
     ctx.closePath();
-}
+};
 
 // Draw Paddle
 function drawPaddle(){
     ctx.beginPath();
-    
     ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
     ctx.fillStyle = '#0095DD';
     ctx.fill();
     ctx.closePath();
+};
+
+// Draw Bricks
+function drawBricks(){
+    for(var c = 0; c < brickColumnCount; c++){
+        for (var r= 0; r< brickRowCount; r++){
+            var brickX = (c*(brickWidth + brickPadding)) + brickOffsetLeft;
+            var brickY = (r*(brickHeight + brickPadding)) + brickOffsetTop;
+            bricks[c][r].x = brickX;
+            bricks[c][r].y = brickY;
+            ctx.beginPath();
+            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+            ctx.fillStyle = '#0095DD';
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
 }
 
 // draw function with interval timer of 10 seconds
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBricks();
     drawBall()
     drawPaddle()
     x += dx;
@@ -41,8 +73,16 @@ function draw() {
     if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
         dx = -dx
     }
-    if (y + dy >canvas.height- ballRadius || y + dy < ballRadius){
+    if (y + dy < ballRadius){
         dy = -dy
+    } else if(y + dy > canvas.height-ballRadius){
+        if(x > paddleX && x < paddleX + paddleWidth){
+            dy = -dy
+        } else {
+            alert('Game Over!');
+            document.location.reload();
+            clearInterval(interval)
+        }
     }
     if(rightPressed) {
         paddleX += 7;
@@ -57,6 +97,7 @@ function draw() {
     }
 }
 
+// These control the event handlers for keyboard presses left + right
 function keyDownHandler(e) {
     if(e.key == "Right" || e.key == "ArrowRight") {
         rightPressed = true;
@@ -78,6 +119,6 @@ function keyUpHandler(e) {
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
-setInterval(draw, 10)
+var interval = setInterval(draw, 10)
 
 
