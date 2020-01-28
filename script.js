@@ -15,15 +15,15 @@ const paddle = {
 let paddleX = (canvas.width - paddle.width) / 2;
 let rightPressed = false;
 let leftPressed = false;
-let brickRowCount = 5;
-let brickColumnCount = 5;
+const brickRowCount = 5;
+const brickColumnCount = 5;
 const brickWidth = 75;
 const brickHeight = 20;
 const brickPadding = 10;
 const brickOffsetTop = 30;
 const brickOffsetLeft = 30;
 let score = 0;
-let level = 1;
+// let level = 1;
 let lives = 1000;
 const ball = {
   color: '#0095DD',
@@ -67,8 +67,8 @@ function drawBricks() {
   for (let c = 0; c < brickColumnCount; c += 1) {
     for (let r = 0; r < brickRowCount; r += 1) {
       if (bricks[c][r].status === 1) {
-        let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
-        let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+        const brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+        const brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
         bricks[c][r].x = brickX;
         bricks[c][r].y = brickY;
         ctx.beginPath();
@@ -104,10 +104,48 @@ function drawScore() {
   ctx.fillText(`Score: ${score}`, 8, 20);
 }
 
-function drawLevel() {
-  ctx.font = '16px Arial';
-  ctx.fillStyle = '#0095DD';
-  ctx.fillText(`Level: ${level}`, 200, 20);
+// function drawLevel() {
+//   ctx.font = '16px Arial';
+//   ctx.fillStyle = '#0095DD';
+//   ctx.fillText(`Level: ${level}`, 200, 20);
+// }
+
+// Game Logic
+function gameLogic() {
+  x += dx;
+  y += dy;
+  if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+    dx = -dx;
+  }
+  if (y + dy < ballRadius) {
+    dy = -dy;
+  } else if (y + dy > canvas.height - ballRadius) {
+    if (x > paddleX && x < paddleX + paddle.width) {
+      dy = -dy - 1;
+      paddle.width -= 3;
+      paddle.color = randomColor();
+    } else {
+      lives -= 1;
+      if (!lives) {
+        alert('Game Over!');
+        document.location.reload();
+      } else {
+        x = canvas.width / 2;
+        y = canvas.height - 30;
+        dx = 3;
+        dy = -3;
+        paddleX = (canvas.width - paddle.width) / 2;
+      }
+    }
+  }
+
+  if (rightPressed && paddleX < canvas.width - paddle.width) {
+    paddleX += 7;
+  } else if (leftPressed && paddleX > 0) {
+    paddleX -= 7;
+  }
+  x += dx;
+  y += dy;
 }
 
 // draw Lives
@@ -147,42 +185,9 @@ function draw() {
   drawBricks();
   drawScore();
   drawLives();
-  drawLevel();
+  //   drawLevel();
   collisionDetection();
-  x += dx;
-  y += dy;
-  if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
-    dx = -dx;
-  }
-  if (y + dy < ballRadius) {
-    dy = -dy;
-  } else if (y + dy > canvas.height - ballRadius) {
-    if (x > paddleX && x < paddleX + paddle.width) {
-      dy = -dy - 1;
-      paddle.width -= 3;
-      paddle.color = randomColor();
-    } else {
-      lives -= 1;
-      if (!lives) {
-        alert('Game Over!');
-        document.location.reload();
-      } else {
-        x = canvas.width / 2;
-        y = canvas.height - 30;
-        dx = 3;
-        dy = -3;
-        paddleX = (canvas.width - paddle.width) / 2;
-      }
-    }
-  }
-
-  if (rightPressed && paddleX < canvas.width - paddle.width) {
-    paddleX += 7;
-  } else if (leftPressed && paddleX > 0) {
-    paddleX -= 7;
-  }
-  x += dx;
-  y += dy;
+  gameLogic();
   requestAnimationFrame(draw);
 }
 
