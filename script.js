@@ -27,6 +27,16 @@ let score = 0;
 let lives = 1000;
 const ball = {
   color: '#0095DD',
+  x: canvas.width / 2,
+  y: canvas.height - 30,
+  dx: 2,
+  dy: -2,
+  radius: 20,
+  move() {
+    this.x += this.dx;
+    this.y += this.dy;
+  },
+
 };
 
 const bricks = [];
@@ -47,7 +57,7 @@ function randomColor() {
 // draw Ball
 function drawBall() {
   ctx.beginPath();
-  ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+  ctx.arc(ball.x, ball.y, ballRadius, 0, Math.PI * 2);
   ctx.fillStyle = ball.color;
   ctx.fill();
   ctx.closePath();
@@ -104,24 +114,17 @@ function drawScore() {
   ctx.fillText(`Score: ${score}`, 8, 20);
 }
 
-// function drawLevel() {
-//   ctx.font = '16px Arial';
-//   ctx.fillStyle = '#0095DD';
-//   ctx.fillText(`Level: ${level}`, 200, 20);
-// }
-
 // Game Logic
 function gameLogic() {
-  x += dx;
-  y += dy;
-  if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
-    dx = -dx;
+  ball.move();
+  if (ball.x + ball.dx > canvas.width - ball.radius || ball.x + ball.dx < ball.radius) {
+    ball.dx *= -1;
   }
-  if (y + dy < ballRadius) {
-    dy = -dy;
-  } else if (y + dy > canvas.height - ballRadius) {
-    if (x > paddleX && x < paddleX + paddle.width) {
-      dy = -dy - 1;
+  if (ball.y + ball.dy < ball.radius) {
+    ball.dy *= -1;
+  } else if (ball.y + ball.dy > canvas.height - ball.radius) {
+    if (ball.x > paddleX && ball.x < paddleX + paddle.width) {
+      ball.dy = -(ball.dy) - 1;
       paddle.width -= 3;
       paddle.color = randomColor();
     } else {
@@ -130,11 +133,11 @@ function gameLogic() {
         alert('Game Over!');
         document.location.reload();
       } else {
-        x = canvas.width / 2;
-        y = canvas.height - 30;
-        dx = 3;
-        dy = -3;
-        paddleX = (canvas.width - paddle.width) / 2;
+        ball.x = canvas.width / 2;
+        ball.y = canvas.height - 30;
+        ball.dx = 3;
+        ball.dy = -3;
+        paddle.x = (canvas.width - paddle.width) / 2;
       }
     }
   }
@@ -144,8 +147,7 @@ function gameLogic() {
   } else if (leftPressed && paddleX > 0) {
     paddleX -= 7;
   }
-  x += dx;
-  y += dy;
+  ball.move();
 }
 
 // draw Lives
@@ -162,10 +164,10 @@ function collisionDetection() {
     for (let r = 0; r < brickRowCount; r += 1) {
       const b = bricks[c][r];
       if (b.status === 1) {
-        if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+        if (ball.x > b.x && ball.x < b.x + brickWidth && ball.y > b.y && ball.y < b.y + brickHeight) {
           // eslint-disable-next-line no-console
           ball.color = randomColor();
-          dy = -dy;
+          ball.dy *= -1;
           b.status = 0;
           score += 1;
           if (score === brickRowCount * brickColumnCount) {
