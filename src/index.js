@@ -18,7 +18,7 @@ class Sprite {
 
 // Ball Object
 class Ball extends Sprite {
-  constructor(x, y, dx, dy, radius, color = "#0095DD") {
+  constructor(x, y, dx, dy, radius, color) {
     super(x, y)
     console.log(this.y)
     this.radius = radius;
@@ -37,7 +37,7 @@ class Ball extends Sprite {
     // console.log(this.x, this.y, this.radius)
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
+    ctx.fillStyle = "white";
     ctx.fill();
     ctx.closePath();
   }
@@ -51,7 +51,7 @@ class Brick {
     this.y = y;
     this.width = width; 
     this.height = height;
-    this.color = color;
+    this.color = randomColor();
     this.status = 1;
   }
   render(ctx) {
@@ -72,11 +72,13 @@ class Bricks {
   constructor(row = 5, column = 5) {
     this.rowCount = row;
     this.columnCount = column;
-    this.brickWidth = 75;
-    this.brickHeight = 20;
+    this.brickWidth = 120; 
+    // canvas.width - (2 * offsetLeft) - (columns - 1) * padding
+    // (700 - 100) / 5
+    this.brickHeight = 20; 
     this.brickPadding = 10;
-    this.offsetLeft = 30;
-    this.brickOffsetTop = 30;
+    this.offsetLeft = 30; // space on either side
+    this.brickOffsetTop = 60;
     this.bricksArray = [];
     this.setup()
   }
@@ -113,7 +115,7 @@ class Paddle extends Sprite {
   render(ctx) {
     ctx.beginPath();
     ctx.rect(this.x, canvas.height - this.paddleHeight, this.paddleWidth, this.paddleHeight);
-    ctx.fillStyle = '#0095DD';
+    ctx.fillStyle = 'black';
     ctx.fill();
     ctx.closePath();
   }
@@ -121,10 +123,10 @@ class Paddle extends Sprite {
 
 // Game Class
 class Game {
-  constructor(ballRadius, brickRowCount = 5, brickColumnCount = 5, ballColor = '#0095DD', paddleWidth = 75, paddleHeight = 10) {
+  constructor(ballRadius, brickRowCount = 5, brickColumnCount = 5, ballColor = "white", paddleWidth = 75, paddleHeight = 10) {
     this.lives = 1000;
     this.score = 0;
-    this.scoreMultiplier = 100000
+    this.scoreMultiplier = 10
     this.gameRunning = true;
     this.bricks = new Bricks(brickRowCount, brickColumnCount);
     this.paddle = new Paddle(canvas.width / 2, canvas.height - 50, paddleWidth, paddleHeight);
@@ -132,16 +134,17 @@ class Game {
   }
 
   drawScore(ctx){
-    ctx.font = '16px Arial';
-    ctx.fillStyle = '#0095DD';
-    ctx.fillText(`Score: ${game.score}`, 8, 20);
+    ctx.font = '20px Impact';
+    ctx.fillStyle = "black";
+    ctx.fillText(`Score: ${game.score}`, 8, 30);
   }
 
   drawLives(ctx) {
-    ctx.font = '16px Arial';
-    ctx.fillstyle = '#0095DD';
+    ctx.font = '20px Impact';
+    ctx.fillStyle = "black";
+    console.log(ctx.fillStyle)
     ctx.fill();
-    ctx.fillText(`Lives: ${game.lives}`, canvas.width - 65, 20);
+    ctx.fillText(`Lives: ${game.lives}`, canvas.width - 95, 30);
   }
 
   gameItems(ctx) {
@@ -215,7 +218,7 @@ function draw() {
   collisionDetection();
 
   if(game.ball.x + game.ball.dx > canvas.width - game.ball.radius || game.ball.x < game.ball.radius ) {
-    game.ball.dx = -(game.ball.dx);
+    game.ball.dx = -(game.ball.dx); // This will hit the sides of canvas
   } 
 
   if (game.ball.y + game.ball.dy < game.ball.radius) {
@@ -225,7 +228,6 @@ function draw() {
     if(game.ball.x - game.ball.radius < game.paddle.x + game.paddle.paddleWidth && game.ball.x + game.ball.radius > game.paddle.x ) {
         
       } else {
-        console.log(game.lives)
         game.lives -= 1;
         if(!game.lives) {
           game.drawLives(ctx);

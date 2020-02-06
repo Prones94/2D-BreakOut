@@ -1,9 +1,14 @@
-* {
+body {
     padding: 0;
-    margin: 0
+    margin: 0;
+    background-color: black;
+    display: flex;
+    justify-content: center;
 }
 
 canvas {
+    display: flex;
+    border: 10px white solid;
     background: #74ebd5;
     background: -webkit-linear-gradient(to right, #74ebd5, #acb6e5);
     background: linear-gradient(to right, #74ebd5, #acb6e5);
