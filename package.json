@@ -1,17 +1,19 @@
 {
-  "name": "BreakOut",
+  "name": "breakout",
   "version": "1.0.0",
-  "description": "",
-  "main": "script.js",
+  "description": "Simple Breakout Game in 2D",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "develop": "webpack --mode development --watch",
+    "build": "webpack --mode production"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Prones94/2D-BreakOut.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Ian Rones @ Make School",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Prones94/2D-BreakOut/issues"
@@ -21,6 +23,8 @@
   "devDependencies": {
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.20.0"
+    "eslint-plugin-import": "^2.20.0",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
   }
 }
